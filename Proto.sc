@@ -9,7 +9,7 @@
 Proto {
 	classvar	<>strict = false, <>warnOnAssignment = true;
 
-	var	<>env;	// I'm providing a setter for env, but it's really for internal use only
+	var	<env;	// setter is below, but it's really for internal use only
 				// be careful if you muck around with it!
 	var	<>putAction,
 		>isPrototype;	// safety check for chucklib
@@ -280,5 +280,23 @@ Proto {
 		});
 	}
 
+	env_ { |newEnv|
+		case
+		{ newEnv.isKindOf(Dictionary) } {
+			env = newEnv
+		}
+		{ newEnv.isKindOf(Proto) } {
+			env = newEnv.env
+		}
+		{
+			Error(
+				"Attempt to set a Proto's environment to a% %"
+				.format(
+					if(newEnv.class.name.asString[0].isVowel) { "n" } { "" },
+					newEnv.class.name
+				)
+			).throw
+		}
+	}
 }
 
